@@ -110,7 +110,7 @@ public class Start extends JFrame {
 						JOptionPane.YES_NO_OPTION) == 0) {
 					this.listModel.removeElement(r);
 					this.receipts.remove(r);
-					// TODO file löschen
+					new File(Start.receiptsFile, r.getID() + ".bon").delete();
 				}
 			}
 
