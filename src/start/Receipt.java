@@ -28,7 +28,7 @@ public class Receipt implements Serializable {
 			return null;
 		}
 		// Wo
-		JComboBox<Location> comboBox = new JComboBox<>(Location.allLocation().toArray(Location[]::new));
+		JComboBox<Location> comboBox = new JComboBox<>(Location.allLocation().toArray(new Location[0]));
 		JOptionPane.showMessageDialog(parent, comboBox, "Wo?", JOptionPane.QUESTION_MESSAGE);
 		Location location = (Location) comboBox.getSelectedItem();
 		// Ausgaben

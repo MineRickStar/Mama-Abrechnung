@@ -93,7 +93,7 @@ public class Expenses extends JDialog {
 			gbc.gridy = 0;
 			gbc.gridx++;
 			panel.add(new JLabel("Kategorie:"), gbc);
-			JComboBox<Category> categoriesComboBox = new JComboBox<>(Category.allCategories().toArray(Category[]::new));
+			JComboBox<Category> categoriesComboBox = new JComboBox<>(Category.allCategories().toArray(new Category[0]));
 			gbc.gridx++;
 			panel.add(categoriesComboBox, gbc);
 			gbc.gridx++;
