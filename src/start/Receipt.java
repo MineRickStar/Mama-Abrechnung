@@ -10,7 +10,7 @@ import java.io.ObjectOutputStream.PutField;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.UUID;
 
 import javax.swing.JComboBox;
@@ -32,7 +32,10 @@ public class Receipt implements Serializable {
 		JOptionPane.showMessageDialog(parent, comboBox, "Wo?", JOptionPane.QUESTION_MESSAGE);
 		Location location = (Location) comboBox.getSelectedItem();
 		// Ausgaben
-		HashMap<Category, Double> expenses = Expenses.getExpenses(parent);
+		ArrayList<Expense> expenses = Expenses.getExpenses(parent);
+		if (expenses.isEmpty()) {
+			return null;
+		}
 
 		return new Receipt(dateTime, location, expenses);
 	}
@@ -45,16 +48,17 @@ public class Receipt implements Serializable {
 
 	Location location;
 
-	final HashMap<Category, Double> expenses;
+	final ArrayList<Expense> expenses;
 
 	double summe;
 
 	UUID id;
 
-	public Receipt(LocalDateTime dateTime, Location location, HashMap<Category, Double> expenses) {
+	public Receipt(LocalDateTime dateTime, Location location, ArrayList<Expense> expenses) {
 		this.dateTime = dateTime;
 		this.location = location;
 		this.expenses = expenses;
+		this.summe = expenses.stream().mapToDouble(Expense::getValue).sum();
 		this.id = UUID.randomUUID();
 		this.write();
 	}

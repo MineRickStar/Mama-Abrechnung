@@ -2,37 +2,34 @@ package start;
 
 import java.awt.Color;
 import java.awt.GridLayout;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.nio.file.Files;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.swing.DefaultListModel;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JMenu;
 import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.WindowConstants;
 
 public class Start extends JFrame {
 
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 811156888087713146L;
 
-	public static final File receiptsFile = new File(new File(System.getProperty("user.dir"), "Mama Abrechnung"),
-			"Kassenzettel");
+	public static final File location = new File(System.getProperty("user.dir"), "Mama Abrechnung");
+
+	public static final File receiptsFile = new File(Start.location, "Kassenzettel");
 
 	JList<Receipt> list;
 
@@ -46,21 +43,20 @@ public class Start extends JFrame {
 		this.receipts = new ArrayList<>();
 		this.listModel = new DefaultListModel<>();
 		this.list = new JList<>(this.listModel);
-		if (!Start.receiptsFile.mkdirs()) {
-			// Only read if the location does not exist
-			this.read();
-		}
-		this.setSize(400, 800);
+		Start.receiptsFile.mkdirs();
+		this.read();
+		this.setSize(400, 400);
 		this.setResizable(false);
 		this.setLocationRelativeTo(null);
 
+		this.list.setFixedCellHeight(20);
 		this.list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
 		this.list.setCellRenderer((thisList, value, index, isSelected, cellHasFocus) -> {
 			JPanel panel = new JPanel(new GridLayout(1, 0, 10, 10));
 			JLabel label = new JLabel("Datum: " + value.getLocaleDateTimeString());
 			panel.add(label);
-			JLabel label2 = new JLabel("Summe: " + value.getSumme() + " €");
+			JLabel label2 = new JLabel("Summe: " + new DecimalFormat("#.00").format(value.getSumme()) + "â‚¬");
 			panel.add(label2);
 
 			if (isSelected) {
@@ -79,10 +75,8 @@ public class Start extends JFrame {
 	private void addMenu() {
 		JMenuBar menuBar = new JMenuBar();
 
-		JMenu file = new JMenu("File");
-
-		JMenuItem newReceipt = new JMenuItem("Neu");
-		newReceipt.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK));
+		JButton newReceipt = new JButton("Neu");
+//		newReceipt.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK));
 		newReceipt.addActionListener(e -> {
 			Receipt receipt = Receipt.newReceipt(this);
 			if (receipt != null) {
@@ -92,8 +86,8 @@ public class Start extends JFrame {
 			}
 		});
 
-		JMenuItem edit = new JMenuItem("Bearbeiten");
-		edit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_DOWN_MASK));
+		JButton edit = new JButton("Bearbeiten");
+//		edit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_DOWN_MASK));
 		edit.addActionListener(e -> {
 			if (this.list.getSelectedValue() == null) {
 				return;
@@ -101,12 +95,12 @@ public class Start extends JFrame {
 			Receipt.editReceipt(this.list.getSelectedValue());
 		});
 
-		JMenuItem delete = new JMenuItem("Löschen");
-		delete.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
+		JButton delete = new JButton("LÃ¶schen");
+//		delete.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
 		delete.addActionListener(e -> {
 			Receipt r = this.list.getSelectedValue();
 			if (r != null) {
-				if (JOptionPane.showConfirmDialog(Start.this, "Datensatz wirklich löschen?", "Löschen?",
+				if (JOptionPane.showConfirmDialog(Start.this, "Datensatz wirklich lÃ¶schen?", "LÃ¶schen?",
 						JOptionPane.YES_NO_OPTION) == 0) {
 					this.listModel.removeElement(r);
 					this.receipts.remove(r);
@@ -116,14 +110,14 @@ public class Start extends JFrame {
 
 		});
 
-		file.add(newReceipt);
-		file.add(edit);
-		file.add(delete);
-		menuBar.add(file);
+		menuBar.add(newReceipt);
+		menuBar.add(edit);
+		menuBar.add(delete);
 		this.setJMenuBar(menuBar);
 	}
 
 	private void read() {
+		Category.read();
 		File[] files = Start.receiptsFile.listFiles();
 		Arrays.asList(files).forEach(file -> {
 			try {
