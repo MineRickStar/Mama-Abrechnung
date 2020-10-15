@@ -1,6 +1,5 @@
 package gui;
 
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -50,8 +49,8 @@ public class MainFrame extends JFrame {
 
 		this.setJMenuBar(this.addMenu(start));
 
-		this.setMinimumSize(new Dimension(680, 480));
 		this.pack();
+		this.setMinimumSize(this.getSize());
 		this.setLocationRelativeTo(null);
 		this.setVisible(true);
 	}
